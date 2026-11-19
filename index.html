@@ -240,7 +240,7 @@
     let allParksCache = [];
 
     async function initPage() {
-        const res = await fetch('./oopt.json');
+        const res = await fetch('/api/oopt');
         allParksCache = await res.json();
         const select = document.getElementById('ooptSelect');
         allParksCache.forEach(p => {
@@ -255,14 +255,14 @@
     async function onSearchInput() {
         document.getElementById('ooptSelect').value = '';
         const query = document.getElementById('searchInput').value;
-        const res = await fetch('./oopt.json?q=' + encodeURIComponent(query));
+        const res = await fetch('/api/oopt?q=' + encodeURIComponent(query));
         renderCards(await res.json());
     }
 
     async function onSelectChange() {
         document.getElementById('searchInput').value = '';
         const selectedId = document.getElementById('ooptSelect').value;
-        const url = selectedId ? './oopt.json?id=' + selectedId : './oopt.json';
+        const url = selectedId ? '/api/oopt?id=' + selectedId : '/api/oopt';
         const res = await fetch(url);
         renderCards(await res.json());
     }
