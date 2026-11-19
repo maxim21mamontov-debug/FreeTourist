@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FreeTourist — Помощник туриста по ООПТ России</title>
+    <style>
+        :root {
+            --primary: #2e7d32;
+            --primary-hover: #1b5e20;
+            --bg: #f4f7f5;
+            --card-bg: #ffffff;
+            --text: #1f2937;
+            --warning: #ed6c02;
+            --danger: #d32f2f;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 0;
+            line-height: 1.5;
+        }
+        header {
+            background-color: var(--primary);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        .container {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 0 15px;
+        }
+        .geo-banner {
+            background: #e8f5e9;
+            border: 1px solid #a5d6a7;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .law-memo {
+            background: #fff3e0;
+            border: 1px solid #ffcc80;
+            border-left: 5px solid var(--warning);
+            padding: 14px 18px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: #3e2723;
+        }
+        .law-memo strong { color: #bf360c; font-size: 15px; }
+        .law-link {
+            display: inline-block;
+            margin-top: 6px;
+            color: #1565c0;
+            font-weight: 600;
+            text-decoration: none;
+        }
+        .law-link:hover { text-decoration: underline; }
+        .geo-alert {
+            background: #ffebee;
+            border: 2px solid var(--danger);
+            color: #b71c1c;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        .filter-panel {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        .search-box, .select-box {
+            padding: 12px 14px;
+            font-size: 15px;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+            box-sizing: border-box;
+            background: white;
+        }
+        .search-box { flex: 2; min-width: 240px; }
+        .select-box { flex: 1; min-width: 220px; }
+        .card {
+            background: var(--card-bg);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .card h2 { margin-top: 0; color: var(--primary); }
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .badge-open { background: #e8f5e9; color: #2e7d32; }
+        .badge-warning { background: #fff3e0; color: #e65100; }
+        .links-group {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 6px;
+        }
+        .source-link {
+            color: #1565c0;
+            font-weight: 500;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        .source-link:hover { text-decoration: underline; }
+        .calc-box {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+        .calc-row {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+        }
+        .calc-row label { display: flex; flex-direction: column; font-size: 14px; }
+        .calc-row input { padding: 6px; width: 80px; margin-top: 4px; }
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 11px 18px;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            font-weight: 500;
+        }
+        .btn:hover { background: var(--primary-hover); }
+        .btn-secondary { background: #455a64; }
+        .btn-secondary:hover { background: #263238; }
+        .btn-copy { background: #0277bd; margin-top: 8px; }
+        .btn-copy:hover { background: #01579b; }
+        .manual-box {
+            background: #fff8e1;
+            border-left: 4px solid #ffb300;
+            padding: 15px;
+            margin-top: 15px;
+            border-radius: 6px;
+        }
+        .app-form {
+            background: #ffffff;
+            border: 1px solid #ffe082;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 12px;
+        }
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+        .form-grid label {
+            display: flex;
+            flex-direction: column;
+            font-size: 13px;
+            font-weight: 500;
+        }
+        .form-grid input {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-top: 4px;
+            font-size: 14px;
+        }
+        .generated-text {
+            width: 100%;
+            height: 155px;
+            padding: 10px;
+            border: 1px solid #b0bec5;
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 13px;
+            box-sizing: border-box;
+            background: #f8fafc;
+            resize: vertical;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1> FreeTourist </h1>
+    <p>Информационный агрегатор для оформления разрешений на посещение ООПТ России</p>
+</header>
+
+<div class="container">
+    <div class="geo-banner">
+        <div>
+            <strong>Гео-контроль границ ООПТ</strong><br>
+            <small>Проверит, не находитесь ли вы сейчас на охраняемой территории без пропуска</small>
+        </div>
+        <div>
+            <button class="btn" onclick="checkRealGeo()">📍 Проверить мою геолокацию</button>
+            <button class="btn btn-secondary" onclick="simulateGeo()" title="Для демонстрации проекта">🧪 Тест (я на Куршской косе)</button>
+        </div>
+    </div>
+
+    <div id="geoAlert" class="geo-alert"></div>
+
+    <div class="law-memo">
+        <strong>⚖️ Почему выгоднее оформить пропуск заранее? (ст. 8.39 КоАП РФ)</strong><br>
+        Средняя стоимость пропуска в нацпарк составляет <b>300–400 рублей</b>, тогда как нахождение на территории ООПТ без разрешения влечет административный <b>штраф для граждан от 3 000 до 4 000 рублей</b> (в 10 раз дороже билета!) с возможной конфискацией снаряжения или транспорта.<br>
+        <a href="https://consultant.ru" target="_blank" class="law-link">📖 Ознакомиться со статьей 8.39 КоАП РФ на КонсультантПлюс ↗</a>
+    </div>
+
+    <div class="filter-panel">
+        <input type="text" id="searchInput" class="search-box" placeholder="Поиск по названию или региону..." oninput="onSearchInput()">
+        <select id="ooptSelect" class="select-box" onchange="onSelectChange()">
+            <option value="">-- Выбрать конкретную ООПТ --</option>
+        </select>
+    </div>
+
+    <div id="ooptList"></div>
+</div>
+
+<script>
+    let allParksCache = [];
+
+    async function initPage() {
+        const res = await fetch('./oopt.json');
+        allParksCache = await res.json();
+        const select = document.getElementById('ooptSelect');
+        allParksCache.forEach(p => {
+            const opt = document.createElement('option');
+            opt.value = p.id;
+            opt.innerText = p.name;
+            select.appendChild(opt);
+        });
+        renderCards(allParksCache);
+    }
+
+    async function onSearchInput() {
+        document.getElementById('ooptSelect').value = '';
+        const query = document.getElementById('searchInput').value;
+        const res = await fetch('./oopt.json?q=' + encodeURIComponent(query));
+        renderCards(await res.json());
+    }
+
+    async function onSelectChange() {
+        document.getElementById('searchInput').value = '';
+        const selectedId = document.getElementById('ooptSelect').value;
+        const url = selectedId ? './oopt.json?id=' + selectedId : './oopt.json';
+        const res = await fetch(url);
+        renderCards(await res.json());
+    }
+
+    function getParkNameById(id) {
+        const found = allParksCache.find(p => p.id === id);
+        return found ? found.name : 'ООПТ';
+    }
+
+    function renderCards(data) {
+        const container = document.getElementById('ooptList');
+        container.innerHTML = '';
+
+        if (data.length === 0) {
+            container.innerHTML = '<p>По вашему запросу ООПТ не найдены в базе.</p>';
+            return;
+        }
+
+        data.forEach(item => {
+            const statusClass = item.mchs_status === 'open' ? 'badge-open' : 'badge-warning';
+            const statusText = item.mchs_status === 'open' ? '✅ Открыто для посещения (МЧС)' : '⚠️ Действуют ограничения (МЧС)';
+
+            let linksHtml = '<div class="links-group">';
+            if (item.mchs_source_url) {
+                linksHtml += '<a href="' + item.mchs_source_url + '" target="_blank" class="source-link">🚨 Портал МЧС (' + item.region + ') ↗</a>';
+            }
+            if (item.park_news_url) {
+                linksHtml += '<a href="' + item.park_news_url + '" target="_blank" class="source-link">📰 Раздел новостей нацпарка/заповедника ↗</a>';
+            }
+            linksHtml += '</div>';
+
+            let actionBlock = '';
+            if (item.payment_url) {
+                actionBlock = '<a href="' + item.payment_url + '" target="_blank" class="btn">Перейти к официальной оплате на сайте ООПТ ↗</a>';
+            } else {
+                const emailLabel = item.contact_email || 'отдел туризма';
+                actionBlock = 
+                    '<div class="manual-box">' +
+                        '<strong>Прямая онлайн-оплата отсутствует. План действий:</strong>' +
+                        '<div style="white-space: pre-line; margin-top: 6px;">' + item.manual_instruction + '</div>' +
+                        '<div class="app-form">' +
+                            '<strong>📝 Генератор текста заявки на почту заповедника (' + emailLabel + '):</strong>' +
+                            '<div class="form-grid" style="margin-top: 10px;">' +
+                                '<label>Ваше ФИО:' +
+                                    '<input type="text" id="fio_' + item.id + '" placeholder="Иванов Иван Иванович" oninput="updateApplicationText(' + item.id + ')">' +
+                                '</label>' +
+                                '<label>Серия и номер паспорта:' +
+                                    '<input type="text" id="pass_' + item.id + '" placeholder="4500 123456" oninput="updateApplicationText(' + item.id + ')">' +
+                                '</label>' +
+                                '<label>Дата поездки:' +
+                                    '<input type="date" id="date_' + item.id + '" onchange="updateApplicationText(' + item.id + ')">' +
+                                '</label>' +
+                            '</div>' +
+                            '<textarea id="apptext_' + item.id + '" class="generated-text" readonly></textarea>' +
+                            '<button class="btn btn-copy" onclick="copyAppText(' + item.id + ')">📋 Скопировать текст заявки</button>' +
+                            '<span id="copystatus_' + item.id + '" style="margin-left: 10px; color: var(--primary); font-weight: bold; font-size: 13px;"></span>' +
+                        '</div>' +
+                    '</div>';
+            }
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.innerHTML = 
+                '<span class="badge ' + statusClass + '">' + statusText + '</span>' +
+                '<h2>' + item.name + '</h2>' +
+                '<p><strong>Регион:</strong> ' + item.region + '</p>' +
+                '<p><strong>Оперативная обстановка:</strong> ' + item.mchs_note + linksHtml + '</p>' +
+                '<p><strong>Необходимые документы:</strong> ' + item.required_docs + '</p>' +
+                '<p><strong>Бесплатно (льгота 100%):</strong> ' + item.free_categories + '</p>' +
+                '<p><strong>Скидка 50%:</strong> ' + item.discount_50_categories + '</p>' +
+                '<div class="calc-box">' +
+                    '<strong>Калькулятор стоимости пропуска (базовый тариф: ' + item.base_price + ' ₽/чел.):</strong>' +
+                    '<div class="calc-row">' +
+                        '<label>Взрослые (без льгот):' +
+                            '<input type="number" min="0" value="1" id="adult_' + item.id + '" oninput="calcPrice(' + item.id + ', ' + item.base_price + ')">' +
+                        '</label>' +
+                        '<label>Льготники (скидка 50%):' +
+                            '<input type="number" min="0" value="0" id="half_' + item.id + '" oninput="calcPrice(' + item.id + ', ' + item.base_price + ')">' +
+                        '</label>' +
+                        '<label>Бесплатная категория:' +
+                            '<input type="number" min="0" value="0" id="free_' + item.id + '" oninput="calcPrice(' + item.id + ', ' + item.base_price + ')">' +
+                        '</label>' +
+                    '</div>' +
+                    '<div>Итого к оплате: <strong id="total_' + item.id + '" style="font-size: 18px; color: var(--primary);">' + item.base_price + ' ₽</strong></div>' +
+                '</div>' +
+                actionBlock;
+
+            container.appendChild(card);
+
+            if (!item.payment_url) {
+                updateApplicationText(item.id);
+            }
+        });
+    }
+
+    function calcPrice(id, basePrice) {
+        const adults = parseInt(document.getElementById('adult_' + id).value) || 0;
+        const half = parseInt(document.getElementById('half_' + id).value) || 0;
+        const total = (adults * basePrice) + (half * (basePrice * 0.5));
+        document.getElementById('total_' + id).innerText = total + ' ₽';
+        if (document.getElementById('apptext_' + id)) {
+            updateApplicationText(id);
+        }
+    }
+
+    function updateApplicationText(id) {
+        const parkName = getParkNameById(id);
+        const fio = document.getElementById('fio_' + id).value.trim() || '[Укажите ФИО]';
+        const pass = document.getElementById('pass_' + id).value.trim() || '[Серия и номер паспорта]';
+        const dateVal = document.getElementById('date_' + id).value || '[Выберите дату]';
+        const totalStr = document.getElementById('total_' + id).innerText;
+        const adults = document.getElementById('adult_' + id).value || 0;
+        const half = document.getElementById('half_' + id).value || 0;
+        const free = document.getElementById('free_' + id).value || 0;
+
+        const text = 'Здравствуйте!\n' +
+                     'Прошу оформить разрешение на посещение ООПТ: ' + parkName + '.\n\n' +
+                     'Данные заявителя:\n' +
+                     '• ФИО: ' + fio + '\n' +
+                     '• Паспорт РФ: ' + pass + '\n' +
+                     '• Планируемая дата посещения: ' + dateVal + '\n' +
+                     '• Состав группы: взрослых — ' + adults + ', льготников (50%) — ' + half + ', бесплатная категория — ' + free + '.\n' +
+                     '• Расчетная сумма сбора: ' + totalStr + '.\n\n' +
+                     'Прошу направить договор и реквизиты для оплаты. С правилами пребывания на территории ознакомлен(а).';
+
+        document.getElementById('apptext_' + id).value = text;
+    }
+
+    function copyAppText(id) {
+        const textarea = document.getElementById('apptext_' + id);
+        textarea.select();
+        navigator.clipboard.writeText(textarea.value);
+        const status = document.getElementById('copystatus_' + id);
+        status.innerText = '✅ Текст скопирован в буфер обмена!';
+        setTimeout(() => { status.innerText = ''; }, 3000);
+    }
+
+    async function sendCoords(lat, lon) {
+        const res = await fetch('/api/check-location', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ lat, lon })
+        });
+        const data = await res.json();
+        const box = document.getElementById('geoAlert');
+
+        if (data.in_oopt) {
+            const z = data.zones;
+            box.style.display = 'block';
+            box.style.background = '#ffebee';
+            box.style.borderColor = '#d32f2f';
+            box.style.color = '#b71c1c';
+            box.innerHTML = '<strong>🚨 ВНИМАНИЕ! Вы находитесь в границах ООПТ: ' + z.name + ' (до центра ~' + z.distance_km + ' км).</strong><br>Нахождение без разрешения грозит штрафом по ст. 8.39 КоАП РФ (от 3 000 до 4 000 руб.). Оформите пропуск прямо сейчас!';
+        } else {
+            box.style.display = 'block';
+            box.style.background = '#e8f5e9';
+            box.style.borderColor = '#2e7d32';
+            box.style.color = '#1b5e20';
+            box.innerHTML = '✅ Вы находитесь за пределами охраняемых природных территорий из нашей базы.';
+        }
+    }
+
+    function checkRealGeo() {
+        if (!navigator.geolocation) { alert('Ваш браузер не поддерживает геолокацию.'); return; }
+        navigator.geolocation.getCurrentPosition(
+            (pos) => sendCoords(pos.coords.latitude, pos.coords.longitude),
+            () => alert('Не удалось получить доступ к геолокации. Проверьте разрешения браузера.')
+        );
+    }
+
+    function simulateGeo() { sendCoords(55.1500, 20.8500); }
+
+    initPage();
+</script>
+</body>
+</html>
